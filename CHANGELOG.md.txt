@@ -1,0 +1,34 @@
+##Changelog 
+v1.1
+new
+- being very chunky now offers some defensive bonuses
+- Added dessert buff effect to melon slices
+- added liver of the beast as a special delicacy when cooked 
+
+changes
+- increased fat gain from melon slices
+- increased fat gain from milk
+- increased fat gain from chocolate milk
+- increased fat gain from donuts
+- slightly reduced the speed you can reduce fat
+- changed what buff apples give
+
+fixes
+- cocoa beans can now be eaten when full
+- kibble is eaten by wolves again
+v1.1a
+- changed hunger calculations to simpler terms, changing nothing.
+
+v1.2
+- Massively slowed down the speed at which fat drains.
+- Fat bar is now roughly worth 4 full food bars of energy: 
+	This makes fat a long term hunger bar, it wont save you from direct
+	starvation, but it will help slow actual hunger down by a lot and supply
+	food choices
+- Rebalanced certain fatsources to work better with the new mechanic
+- slowed the rate at which the Soulfood buff heals
+- rebalanced food that give the Soulfood buff
+
+
+
+
