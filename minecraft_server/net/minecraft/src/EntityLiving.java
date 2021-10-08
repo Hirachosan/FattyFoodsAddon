@@ -702,7 +702,7 @@ public abstract class EntityLiving extends Entity
                 {
                     int var2 = EntityXPOrb.getXPSplit(var1);
                     var1 -= var2;
-                    this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, var2));
+                    this.worldObj.spawnEntityInWorld(EntityList.createEntityOfType(EntityXPOrb.class, this.worldObj, this.posX, this.posY, this.posZ, var2));
                 }
             }
             // FCMOD: Code added to spawn Dragon Orbs when the creature is not killed by a player
@@ -712,7 +712,7 @@ public abstract class EntityLiving extends Entity
 
             	if ( iExperienceDropped > 0 )
             	{
-            		worldObj.spawnEntityInWorld(new EntityXPOrb(worldObj, posX, posY, posZ, getExperiencePoints(attackingPlayer), true ) );
+            		worldObj.spawnEntityInWorld(EntityList.createEntityOfType(EntityXPOrb.class, worldObj, posX, posY, posZ, getExperiencePoints(attackingPlayer), true ) );
             	}
 	        }
 	        // END FCMOD
