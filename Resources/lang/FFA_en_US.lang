@@ -1,0 +1,13 @@
+#Items
+item.sugar_stone.name=Sugar Extracting
+
+#Potions
+potion.slowregen=Soulfood
+potion.slowfall=Lightfooted
+potion.extraarmor=Ironskin
+potion.flight=Flying!
+
+
+#Damagesource
+death.attack.thick=%1$s Succumbed to a heart Attack
+

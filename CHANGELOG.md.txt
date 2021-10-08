@@ -26,8 +26,10 @@ v1.2
 	starvation, but it will help slow actual hunger down by a lot and supply
 	food choices
 - Rebalanced certain fatsources to work better with the new mechanic
+- Added new potioneffects
 - slowed the rate at which the Soulfood buff heals
-- rebalanced food that give the Soulfood buff
+- fixed farmers asking for sugar stacks larger than possible with FFA
+
 
 
 

@@ -41,17 +41,22 @@ public class FFADefs {
 	}
 	public static void FFAAddNewRecipes() 	
 	{
+//		craftable
 		FCRecipes.AddShapelessRecipe(new ItemStack(FFADefs.sugarExtraction, 1, 399), new Object[] {Item.reed, FCBetterThanWolves.fcItemChiselStone});
+//		Trades
+		int farmer = FCEntityVillager.professionIDFarmer;
+		FCEntityVillager.removeTradeToBuy(farmer, Item.sugar.itemID, 0 );
+		FCEntityVillager.addTradeToBuyMultipleItems(farmer, Item.sugar.itemID, 8, 16, 1F, 2);
 	}
 
 	public static void FFAAddNewPotions() 
 	{
-		//TODO set color
-	//	FFAheal =  (new FFApotion(id_potionFFAheal, false, 16269179)).setPotionName("potion.fatheal");
-		FFAslowregen =  (new FFApotion(id_potionFFAslowregen, false, 16740429)).setPotionName("potion.slowregen");
-		FFAslowfall =  (new FFApotion(id_potionFFAslowfall, false, 16776658)).setPotionName("potion.slowfall");
-		FFAextraarmor = (new FFApotion(id_potionFFAextraarmor, false, 5855577)).setPotionName("potion.extraarmor");
-		FFAflight = (new FFApotion(id_potionFFAflight, false, 6809599)).setPotionName("potion.flight");
+
+//		FFAheal =  (new FFApotion(id_potionFFAheal, false, 16269179)).setPotionName("potion.fatheal");
+		FFAslowregen =  (new FFApotion(id_potionFFAslowregen, false, 13376006)).setPotionName("potion.slowregen");
+		FFAslowfall =  (new FFApotion(id_potionFFAslowfall, false, 16767395)).setPotionName("potion.slowfall");
+		FFAextraarmor = (new FFApotion(id_potionFFAextraarmor, false, 5395026)).setPotionName("potion.extraarmor");
+		FFAflight = (new FFApotion(id_potionFFAflight, false, 9696729)).setPotionName("potion.flight");
 
 	}
 	
@@ -70,12 +75,12 @@ public class FFADefs {
 		 *  after .class int:1= half shank / float 1 = .5 roll
 		 */
 		// Meats
-		Item.porkRaw = ((FCItemFood) Item.replaceItem(Item.porkRaw.itemID, FCItemFood.class, 1, 4.0F, true, "porkchopRaw", true)).SetMediumFoodPoisoningEffect();
-		Item.porkCooked = Item.replaceItem(Item.porkCooked.itemID, FCItemFood.class, 3, 4.0F, true, "porkchopCooked");
+		Item.porkRaw = ((FCItemFood) Item.replaceItem(Item.porkRaw.itemID, FCItemFood.class, 1, 2.0F, true, "porkchopRaw", true)).SetMediumFoodPoisoningEffect();
+		Item.porkCooked = Item.replaceItem(Item.porkCooked.itemID, FCItemFood.class, 3, 2.0F, true, "porkchopCooked");
 		Item.chickenRaw = ((FCItemFood) Item.replaceItem(Item.chickenRaw.itemID, FCItemFood.class, 3, 0.125F, true, "chickenRaw", true)).SetMediumFoodPoisoningEffect();
 		Item.chickenCooked = Item.replaceItem(Item.chickenCooked.itemID, FCItemFood.class, 5, 0.125F, true, "chickenCooked");
-		Item.beefRaw = ((FCItemFood) Item.replaceItem(Item.beefRaw.itemID, FCItemFood.class, 3, 2.0F, true, "beefRaw", true)).SetLowFoodPoisoningEffect();
-		Item.beefCooked = Item.replaceItem(Item.beefCooked.itemID, FCItemFood.class, 5, 2.0F, true, "beefCooked");
+		Item.beefRaw = ((FCItemFood) Item.replaceItem(Item.beefRaw.itemID, FCItemFood.class, 3, 1.0F, true, "beefRaw", true)).SetLowFoodPoisoningEffect();
+		Item.beefCooked = Item.replaceItem(Item.beefCooked.itemID, FCItemFood.class, 5, 1.0F, true, "beefCooked");
 		FCBetterThanWolves.fcItemMuttonRaw = ((FCItemFood) Item.replaceItem(FCBetterThanWolves.fcItemMuttonRaw.itemID, FCItemFood.class, 3, 0.125F, true, "fcItemMuttonRaw", true)).SetLowFoodPoisoningEffect();
 		FCBetterThanWolves.fcItemMuttonCooked = Item.replaceItem(FCBetterThanWolves.fcItemMuttonCooked.itemID, FCItemFood.class, 5, 0.125F, true, "fcItemMuttonCooked");
 		FCBetterThanWolves.fcItemMeatCured = Item.replaceItem(FCBetterThanWolves.fcItemMeatCured.itemID, FCItemFoodCured.class, 3, 0F, "fcItemMeatCured");
@@ -104,8 +109,8 @@ public class FFADefs {
 		 pumpkin soup pumpkin + milk + bowl ? 2x 2.5shank 0.5roll?
 		 melon (ham)sandwich -> ham bread melon slice = 3x jump level 1? 60 seconds? 2 roll 2shank
 		 Green curry -> pumpkin potato carrot milk bowl
-		 
 		 add coconut?
+		 fcItemTallow = (new Item(ParseID("fcTallowID", 248))).SetBuoyant().SetIncineratedInCrucible().setUnlocalizedName("fcItemTallow").setCreativeTab(CreativeTabs.tabMaterials);
 		 
 		 
 		 */
@@ -137,11 +142,7 @@ public class FFADefs {
 		Item.cake = ((ItemReed) Item.replaceItem(Item.cake.itemID, ItemReed.class, Block.cake)).SetBuoyant().SetIncineratedInCrucible().setMaxStackSize(16).setUnlocalizedName("cake").setCreativeTab(CreativeTabs.tabFood);
 		Block.cake = Block.replaceBlock(Block.cake.blockID, FFABlockcake.class);
 
-//		to add?
-//		fcItemTallow = (new Item(ParseID("fcTallowID", 248))).SetBuoyant().SetIncineratedInCrucible().setUnlocalizedName("fcItemTallow").setCreativeTab(CreativeTabs.tabMaterials);
 	
-		
-		
 		//special case icon things go to FFAItemFood => add specific icon there
 		FCBetterThanWolves.fcItemWolfRaw = ((FFAItemFood) Item.replaceItem(FCBetterThanWolves.fcItemWolfRaw.itemID, FFAItemFood.class, 2, 4.0F, false, "fcItemWolfChopRaw", true)).SetMediumFoodPoisoningEffect();
 		FCBetterThanWolves.fcItemWolfCooked = Item.replaceItem(FCBetterThanWolves.fcItemWolfCooked.itemID, FFAItemFood.class, 3, 4.0F, false, "fcItemWolfChopCooked");
@@ -150,9 +151,8 @@ public class FFADefs {
 
 
 		//Food Recipes
-		
 		Item.bread = Item.replaceItem(Item.bread.itemID, FCItemFood.class, 3, 0.0F, false, "bread");
-	
+		
 		FCBetterThanWolves.fcItemHamAndEggs = Item.replaceItem(FCBetterThanWolves.fcItemHamAndEggs.itemID, FCItemFood.class, 4, 4.5F, true, "fcItemHamAndEggs"); 
 		FCBetterThanWolves.fcItemTastySandwich = Item.replaceItem(FCBetterThanWolves.fcItemTastySandwich.itemID, FCItemFood.class, 6, 0.125F, true, "fcItemSandwichTasty");
 		FCBetterThanWolves.fcItemSteakAndPotatoes = Item.replaceItem(FCBetterThanWolves.fcItemSteakAndPotatoes.itemID, FCItemFood.class, 6, 2.0F, true, "fcItemSteakAndPotatoes");

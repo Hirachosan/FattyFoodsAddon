@@ -1,0 +1,4 @@
+// Fatty Foods Add-on config file
+//
+//Set hunger consumption rate(0=chill 1=easy 2=default 3=hardcore starvation)
+FoodDifficultyLevel=2
