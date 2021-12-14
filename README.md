@@ -13,15 +13,18 @@ This is a mod for BTW that tries to re-balance the way fat works to make it more
 - Desserts is now a food category that brings you special buffs.
 - Cocoa beans and Sugar are considered the firt obtainable items of this type.
 
-
 ## Installation
 - When using deco, install this mod AFTER deco.
 - Place the FFAconfig.txt file in the .minecraft folder if you would like to edit settings.
 
+## Options
+- Download the config file and put it in the .minecraft folder in case you want to mess with its included options
+- for now only lets you change the base hunger rate.
+
 ## Compatabilities
 - The add-on is updated to use CE1.3
-- This add-on isn't compatible with Dynamic Lighting
 - This add-on isn't compatible with Socks eating animations
+- For Dynamic Lighting add-on, install the FFA + DL pack instead!
 
 ## License
  Fatty Foods Add-on by Hiracho is licensed under CC BY-NC-SA 4.0
