@@ -30,13 +30,6 @@ public class ItemFood extends Item
 
     /** probably of the set potion effect occurring */
     private float potionEffectProbability;
-    
-    //FFA instance
-    static
-    {
-    	HiraFatFoodAddon.getInstance();
-    }
-
 
     public ItemFood(int par1, int par2, float par3, boolean par4)
     {
@@ -194,15 +187,4 @@ public class ItemFood extends Item
     	return healAmount * 3;
     }
     // END FCMOD
-    //FFA: added 1/2 and 1/5 food poison chance
-    public ItemFood SetMediumFoodPoisoningEffect()
-    {
-        this.setPotionEffect(Potion.hunger.id, 60, 0, 0.5F);
-        return this;
-    }
-    public ItemFood SetLowFoodPoisoningEffect()
-    {
-        this.setPotionEffect(Potion.hunger.id, 60, 0, 0.20F);
-        return this;
-    }
 }

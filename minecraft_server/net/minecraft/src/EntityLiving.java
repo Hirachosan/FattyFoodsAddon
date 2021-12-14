@@ -1149,11 +1149,7 @@ public abstract class EntityLiving extends Entity
                 var1 += var6;
             }
         }
-        //FFA TODO armor for all living entities non player -> splash potion  works?
-        if (isPotionActive(FFADefs.FFAextraarmor)) 
-        {
-        	var1 += (getActivePotionEffect(FFADefs.FFAextraarmor).getAmplifier()+1);
-        }
+
         return var1;
     }
 
@@ -1398,11 +1394,6 @@ public abstract class EntityLiving extends Entity
     {
         super.fall(par1);
         int var2 = MathHelper.ceiling_float_int(par1 - 3.0F);
-        //FFA jump potion  increase safe fall height
-        if (this.isPotionActive(Potion.jump.id))
-        {
-        	var2 =- this.getActivePotionEffect(Potion.jump).getAmplifier();
-        }
 
         if (var2 > 0)
         {
@@ -1594,12 +1585,7 @@ public abstract class EntityLiving extends Entity
             {
                 this.motionY = 0.2D;
             }
-            //FFA effect of slowfall, limit fallspeed and falldamage as long as pot active
-            if (this.isPotionActive(FFADefs.FFAslowfall.id) && this.motionY < 0.00D)
-            {
-                    this.motionY *= 0.5D;
-                	this.fallDistance = 0.0F;
-            }
+
             if (this.worldObj.isRemote && (!this.worldObj.blockExists((int)this.posX, 0, (int)this.posZ) || !this.worldObj.getChunkFromBlockCoords((int)this.posX, (int)this.posZ).isChunkLoaded))
             {
                 if (this.posY > 0.0D)

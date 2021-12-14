@@ -11,9 +11,12 @@ public class FoodStats
     // END FCMOD
 
     /** The player's food saturation. */
-    //FFA Re-enabled fat at start
-    private float foodSaturationLevel = 4.0F;
-
+    // FCMOD: Code change so that player spawns with zero fat
+    /*
+    private float foodSaturationLevel = 5.0F;
+    */
+    private float foodSaturationLevel = 0F;
+    // END FCMOD
 
     /** The player's food exhaustion. */
     private float foodExhaustionLevel;
@@ -27,31 +30,19 @@ public class FoodStats
     */
     private int prevFoodLevel = 60;
     // END FCMOD
-    
-    //FFA: added stroke as punishment for overeating TODO add colorchange to fat to indicate the severity
-    private boolean Stroke = false;
-    private int Strokecount = 0;
-    //FFA: added for difficulty modes, this sets how much exhaustion gets removed by food (exhaustion cleared per food while nofat)
-    private static float BaseExhaustionCost = 0.8F;
-//    having fat means hunger drain is slowed by this factor (exhaustion cleared per food while having fat)
-    private static float FatExhaustionCost = BaseExhaustionCost*2F;
-//    amount of fat that gets drained per calculation cycle (per food while having fat)
-    private static float FatCost = 0.07F; // 1 shank = 6food, 0.07 is between 1/4 and 1/5 roll per shank
-    
-    private static String FoodDifficulty = "Default";
-    
-    public static void SetBaseExhaustionCost(int Difficulty)
+
+    /**
+     * Args: int foodLevel, float foodSaturationModifier
+     */
+    // FCMOD: Code removed and replaced later by custom function
+    /*
+    public void addStats(int par1, float par2)
     {
-    	if (Difficulty == 0) { BaseExhaustionCost = 1.2F; FoodDifficulty = "Chillmode";}
-    	else if (Difficulty == 1) {BaseExhaustionCost = 0.9F; FoodDifficulty = "Easy";}
-    	else if (Difficulty == 2) { BaseExhaustionCost = 0.8F; FoodDifficulty = "Default";}
-    	else if (Difficulty == 3) {BaseExhaustionCost = 0.7F; FoodDifficulty = "Hardcore starvation";}
-    	else {BaseExhaustionCost = 0.7F; FoodDifficulty = "Default";}
+        this.foodLevel = Math.min(par1 + this.foodLevel, 20);
+        this.foodSaturationLevel = Math.min(this.foodSaturationLevel + (float)par1 * par2 * 2.0F, (float)this.foodLevel);
     }
-    public static  String GetFoodDifficulty()
-    {
-    	return FoodDifficulty;
-    }
+	*/
+	// END FCMOD
 
     /**
      * Eat some food.
@@ -67,7 +58,63 @@ public class FoodStats
     }
 
     /**
-     * Reads food stats from an NBT object.
+     * Handles the food game logic.
+     */
+    // FCMOD: Code removed and replaced later by custom function
+    /*
+    public void onUpdate(EntityPlayer par1EntityPlayer)
+    {
+        int var2 = par1EntityPlayer.worldObj.difficultySetting;
+        this.prevFoodLevel = this.foodLevel;
+
+        if (this.foodExhaustionLevel > 4.0F)
+        {
+            this.foodExhaustionLevel -= 4.0F;
+
+            if (this.foodSaturationLevel > 0.0F)
+            {
+                this.foodSaturationLevel = Math.max(this.foodSaturationLevel - 1.0F, 0.0F);
+            }
+            else if (var2 > 0)
+            {
+                this.foodLevel = Math.max(this.foodLevel - 1, 0);
+            }
+        }
+
+        if (this.foodLevel >= 18 && par1EntityPlayer.shouldHeal())
+        {
+            ++this.foodTimer;
+
+            if (this.foodTimer >= 80)
+            {
+                par1EntityPlayer.heal(1);
+                this.foodTimer = 0;
+            }
+        }
+        else if (this.foodLevel <= 0)
+        {
+            ++this.foodTimer;
+
+            if (this.foodTimer >= 80)
+            {
+                if (par1EntityPlayer.getHealth() > 10 || var2 >= 3 || par1EntityPlayer.getHealth() > 1 && var2 >= 2)
+                {
+                    par1EntityPlayer.attackEntityFrom(DamageSource.starve, 1);
+                }
+
+                this.foodTimer = 0;
+            }
+        }
+        else
+        {
+            this.foodTimer = 0;
+        }
+    }
+	*/
+	// END FCMOD
+
+    /**
+     * Reads the food data for the player.
      */
     public void readNBT(NBTTagCompound par1NBTTagCompound)
     {
@@ -101,7 +148,7 @@ public class FoodStats
     }
 
     /**
-     * Writes food stats to an NBT object.
+     * Writes the food data for the player.
      */
     public void writeNBT(NBTTagCompound par1NBTTagCompound)
     {
@@ -123,13 +170,8 @@ public class FoodStats
         return this.foodLevel;
     }
 
-    public int getPrevFoodLevel()
-    {
-        return this.prevFoodLevel;
-    }
-
     /**
-     * If foodLevel is not max.
+     * Get whether the player must eat food.
      */
     public boolean needFood()
     {
@@ -146,7 +188,7 @@ public class FoodStats
      */
     public void addExhaustion(float par1)
     {
-        this.foodExhaustionLevel = Math.min(this.foodExhaustionLevel + par1, 40.0F);        
+        this.foodExhaustionLevel = Math.min(this.foodExhaustionLevel + par1, 40.0F);
     }
 
     /**
@@ -157,137 +199,110 @@ public class FoodStats
         return this.foodSaturationLevel;
     }
 
+    // FCMOD: Added to match client
     public void setFoodLevel(int par1)
     {
         this.foodLevel = par1;
     }
-
+    
     public void setFoodSaturationLevel(float par1)
     {
         this.foodSaturationLevel = par1;
-    }
-     
-    //FFA: added new food+fat gain, no longer needs full hunger for fat to be gained
-    public void addStats(int iFoodGain, float fFatMultiplier)
+    }    
+    // END FCMOD
+
+    // FCMOD: Added New
+    /**
+     * Note that iFoodGain is one third regular hunger gained, with 6 units being a full pip
+     */
+    public void addStats( int iFoodGain, float fFatMultiplier )
     {
+    	int iPreviousFoodLevel = foodLevel;
     	
-
-        foodLevel = Math.min(iFoodGain + foodLevel, 60);
-
-        foodSaturationLevel = Math.min(fFatMultiplier + foodSaturationLevel, 20.0F);
-        if (foodSaturationLevel == 20.0F)
+        foodLevel = Math.min( iFoodGain + foodLevel, 60);
+        
+        int iExcessFood = iFoodGain - ( foodLevel - iPreviousFoodLevel );
+        
+        if ( iExcessFood > 0 )
         {
-        	Stroke = true;
+        	// divide by 3 due to increased resolution
+        	
+            foodSaturationLevel = Math.min( foodSaturationLevel + (float)iExcessFood * fFatMultiplier / 3F, 20F );
         }
-
-
     }
     
-    
-    //FFA: added new checks for hungerupdates ()
-    public void onUpdate(EntityPlayer par1EntityPlayer)
+    public void onUpdate( EntityPlayer player )
     {
-        int var2 = par1EntityPlayer.worldObj.difficultySetting;
+    	// only called on server
+    	
+        int iDifficulty = player.worldObj.difficultySetting;
+        
         prevFoodLevel = foodLevel;
 
-        if (var2 > 0)
+        if ( iDifficulty > 0 )
         {
-
-
-        	while (foodLevel > 0 && foodExhaustionLevel > FatExhaustionCost)
-            {
-//           	vanilla BTW base exhaustion would have been 1. (now standardmode=0.8 so 20% faster drain)
-            	if (foodSaturationLevel <= 0F) 
-            	{
-                	foodExhaustionLevel -= BaseExhaustionCost;
-                	foodLevel = Math.max(foodLevel - 1, 0);
-            	}
-            	else 
-            	{
-
-            		foodExhaustionLevel -= FatExhaustionCost; 
-            		foodLevel = Math.max(foodLevel - 1, 0);  
-//            		speed at which fat drains
-            		foodSaturationLevel = Math.max(foodSaturationLevel - (FatCost), 0.0F);
-
-            	}
-      
-            }
+	        // burn hunger
+	        
+	        while ( foodLevel > 0 && foodExhaustionLevel >= 1.33F && !ShouldBurnFatBeforeHunger() )
+	        {
+	            foodExhaustionLevel -= 1.33F;
+	            
+	            foodLevel = Math.max( foodLevel - 1, 0 );
+	        }
+	        
+	    	// burn fat
+	    	
+	        while ( foodExhaustionLevel >= 0.5F && ShouldBurnFatBeforeHunger() )
+	        {
+	    		foodExhaustionLevel -= 0.5F;
+	    		
+	            foodSaturationLevel = Math.max( foodSaturationLevel - 0.125F, 0F );
+	        }
         }
-                        
         else
         {
-            this.foodExhaustionLevel = 0.0F;
+        	foodExhaustionLevel = 0F;
         }
-        //added reduced healtime for good fat levels
-        if (this.Stroke == true)
+
+        if ( foodLevel > 24 && player.shouldHeal() )
         {
-            if (var2 > 0)
+            ++foodTimer;
+
+            if ( foodTimer >= 600 ) // once every 30 seconds
             {
-            	++this.Strokecount;
-            	int strokedamage = this.Strokecount*this.Strokecount;
-            	//TODO set color/texture for fat change
-                par1EntityPlayer.attackEntityFrom(FFADefs.FFAthick, strokedamage);
-                par1EntityPlayer.addPotionEffect(new PotionEffect(Potion.confusion.id, this.Strokecount*100, 0, true));
+                player.heal( 1 );
+                foodTimer = 0;
             }
-            this.Stroke = false;
         }
-        if (Strokecount >0 && foodSaturationLevel<12F) //reset strokecount when below statuseffects
+        else if ( foodLevel <= 0 && foodSaturationLevel <= 0.01F )
         {
-        	Strokecount=0;
-        }
-        	
-        
-        
-        if (this.foodLevel > 24 && par1EntityPlayer.shouldHeal())
-        {
-        	if(this.foodSaturationLevel >= 12F)
-        	{
-        		++this.foodTimer;
-            	int balancelevel = ((int)this.foodSaturationLevel -12);
-            	int healtime = 300 + 75 * balancelevel;
+            ++foodTimer;
 
-            	if (this.foodTimer >= healtime)
+            if ( foodTimer >= 80 )
+            {
+            	if ( iDifficulty > 0 )
             	{
-                	par1EntityPlayer.heal(1);
-                	this.foodTimer = 0;
-
+            		player.attackEntityFrom( DamageSource.starve, 1 );
             	}
-        	}
+
+                foodTimer = 0;
+            }
+
+            // reset the exhaustion level so that it doesn't stack up while the player is starving
             
-        	else
-        		{
-        		++this.foodTimer;
-        		int balancelevel = ((int)this.foodSaturationLevel -12);
-        		int healtime = 300 - 25 * balancelevel;
-
-        		if (this.foodTimer >= healtime)
-        		{
-        			par1EntityPlayer.heal(1);
-        			this.foodTimer = 0;
-        		}
-        		}
-        }
-        //removed check for saturation
-        else if (this.foodLevel <= 0 )
-        {
-            ++this.foodTimer;
-
-            if (this.foodTimer >= 80)
-            {
-                if (var2 > 0)
-                {
-                    par1EntityPlayer.attackEntityFrom(DamageSource.starve, 1);
-                }
-
-                this.foodTimer = 0;
-            }
-
-            this.foodExhaustionLevel = 0.0F;
+            foodExhaustionLevel = 0F;
         }
         else
         {
-            this.foodTimer = 0;
+            foodTimer = 0;
         }
     }
+    
+    private boolean ShouldBurnFatBeforeHunger()
+    {
+    	// only burn fat when the corresponding hunger pip is completely depleted
+    	
+    	return foodSaturationLevel > (float)( ( foodLevel + 5 ) / 6 ) * 2F;    	
+    }
+    // END FCMOD    
 }
