@@ -1,5 +1,7 @@
 package net.minecraft.src;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -2058,16 +2060,44 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
     public boolean canPlayerEdit(int par1, int par2, int par3, int par4, ItemStack par5ItemStack)
     {
-    	// FCMOD: Code added to prevent the player from placing blocks while in mid air
-    	if ( !capabilities.isCreativeMode && !onGround && !inWater && !isOnLadder() && ridingEntity == null && !handleLavaMovement() )
-    	{
-    		return false;
-    	}
-    	// END FCMOD
-    	
+        Class decoManager = null;
+        try {
+            decoManager = Class.forName("DecoManager");
+        } catch (ClassNotFoundException e) {}
+        
+        boolean disableHCBouncing = false;
+        
+        if (decoManager != null) {
+            Field decoHCBouncing;
+            try {
+                decoHCBouncing = decoManager.getDeclaredField("disableHardcoreBouncing");
+                FCAddOn decoInstance = (FCAddOn) decoManager.getDeclaredMethod("getInstance").invoke(null);
+                
+                disableHCBouncing = (Boolean) decoHCBouncing.get(decoInstance);
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
+    
+        // FCMOD: Code added to prevent the player from placing blocks while in mid air
+        if ( !capabilities.isCreativeMode && !onGround && !inWater && !isOnLadder() && ridingEntity == null && !handleLavaMovement()  && !disableHCBouncing)
+        {
+            return false;
+        }
+        // END FCMOD
+        
         return this.capabilities.allowEdit ? true : (par5ItemStack != null ? par5ItemStack.func_82835_x() : false);
     }
-
     /**
      * Get the experience points the entity currently has.
      */
