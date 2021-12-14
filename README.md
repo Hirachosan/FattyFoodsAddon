@@ -20,7 +20,8 @@ This is a mod for BTW that tries to re-balance the way fat works to make it more
 
 ## Compatabilities
 - The add-on is updated to use CE1.3
-- This add-on isn't compatible with Dynamic Lighting (yet)
+- This add-on isn't compatible with Dynamic Lighting
+- This add-on isn't compatible with Socks eating animations
 
 ## License
  Fatty Foods Add-on by Hiracho is licensed under CC BY-NC-SA 4.0
