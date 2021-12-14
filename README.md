@@ -15,17 +15,12 @@ This is a mod for BTW that tries to re-balance the way fat works to make it more
 
 
 ## Installation
-
-This Add-on requires to be installed after Better Than Wolves and CE1.0
-
-- Place the contents of Minecraft in the correct BTW jar
-- Be sure to install after installing CE1.0
+- When using deco, install this mod AFTER deco.
 - Place the FFAconfig.txt file in the .minecraft folder if you would like to edit settings.
 
 ## Compatabilities
-- The add-on needs CE1.0 to run
-- No other addons for CE1.0 have been reported at the time of this writing
-- Might have minor issues with DECO cause it used to edit EntityPlayer as well.
+- The add-on is updated to use CE1.3
+- This add-on isn't compatible with Dynamic Lighting (yet)
 
 ## License
  Fatty Foods Add-on by Hiracho is licensed under CC BY-NC-SA 4.0
