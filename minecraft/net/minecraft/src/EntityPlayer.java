@@ -1,6 +1,8 @@
 package net.minecraft.src;
 
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collection;
@@ -105,6 +107,9 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
     protected float speedOnGround = 0.1F;
     protected float speedInAir = 0.02F;
     private int field_82249_h = 0;
+    
+    //FFA
+    public boolean flyingbypotion = false;
 
     /**
      * An instance of a fishing rod's hook. If this isn't null, the icon image of the fishing rod is slightly different
@@ -257,6 +262,28 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
                 this.clearItemInUse();
             }
         }
+        //FFA  flight potion 
+
+        if  (this.isPotionActive(FFADefs.FFAflight) && !flyingbypotion )
+        {
+        	this.capabilities.allowFlying = true;
+        	flyingbypotion = true;
+        	this.capabilities.setFlySpeed(0.02F);
+
+        }
+        if (flyingbypotion && capabilities.isFlying)
+        {
+        	this.fallDistance = 0.0F;
+        }
+        if (flyingbypotion && !this.isPotionActive(FFADefs.FFAflight))     
+        {
+        	this.capabilities.allowFlying = false; 
+           	this.capabilities.isFlying = false;
+        	this.capabilities.setFlySpeed(0.05F);
+
+        	flyingbypotion = false;
+        }
+  
 
         if (this.xpCooldown > 0)
         {
@@ -1093,9 +1120,21 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
      */
     public int getTotalArmorValue()
     {
-        return this.inventory.getTotalArmorValue();
-    }
+        //FFA armor potion effect and fat giving armor
+    	int var1 = this.inventory.getTotalArmorValue();
 
+    	if (isPotionActive(FFADefs.FFAextraarmor)) 
+        {
+        	var1 += (getActivePotionEffect(FFADefs.FFAextraarmor).getAmplifier()+1);
+        }
+
+    	if ((int)foodStats.getSaturationLevel()>12)
+        {
+        	var1 += ((int)foodStats.getSaturationLevel()-12);
+        }
+        return var1;
+ //old       return this.inventory.getTotalArmorValue();
+    }
     public float func_82243_bO()
     {
         int var1 = 0;
@@ -2171,16 +2210,44 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
     public boolean canPlayerEdit(int par1, int par2, int par3, int par4, ItemStack par5ItemStack)
     {
-    	// FCMOD: Code added to prevent the player from placing blocks while in mid air
-    	if ( !capabilities.isCreativeMode && !onGround && !inWater && !isOnLadder() && ridingEntity == null && !handleLavaMovement() )
-    	{
-    		return false;
-    	}
-    	// END FCMOD
-    	
+        Class decoManager = null;
+        try {
+            decoManager = Class.forName("DecoManager");
+        } catch (ClassNotFoundException e) {}
+        
+        boolean disableHCBouncing = false;
+        
+        if (decoManager != null) {
+            Field decoHCBouncing;
+            try {
+                decoHCBouncing = decoManager.getDeclaredField("disableHardcoreBouncing");
+                FCAddOn decoInstance = (FCAddOn) decoManager.getDeclaredMethod("getInstance").invoke(null);
+                
+                disableHCBouncing = (Boolean) decoHCBouncing.get(decoInstance);
+            } catch (NoSuchFieldException e) {
+                e.printStackTrace();
+            } catch (SecurityException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (InvocationTargetException e) {
+                e.printStackTrace();
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+        }
+    
+        // FCMOD: Code added to prevent the player from placing blocks while in mid air
+        if ( !capabilities.isCreativeMode && !onGround && !inWater && !isOnLadder() && ridingEntity == null && !handleLavaMovement()  && !disableHCBouncing)
+        {
+            return false;
+        }
+        // END FCMOD
+        
         return this.capabilities.allowEdit ? true : (par5ItemStack != null ? par5ItemStack.func_82835_x() : false);
     }
-
     /**
      * Get the experience points the entity currently has.
      */
