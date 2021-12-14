@@ -21,7 +21,7 @@ public class HiraFatFoodAddon extends FCAddOn
 	
 	
 	public HiraFatFoodAddon() {
-		super("Fatty Foods", "1.2", "HiraFatFood");
+		super("Fatty Foods", "1.3.0", "HiraFatFood");
 	}
 	public String GetLanguageFilePrefix()
     {

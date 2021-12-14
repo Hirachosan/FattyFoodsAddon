@@ -1,4 +1,22 @@
 ##Changelog 
+v1.3.0
+- Updated for CE1.3.1
+- Changed epic golden apples foodbuff to something more unique :)
+
+v1.2
+- Massively slowed down the speed at which fat drains.
+- Fat bar is now roughly worth 4 full food bars of energy: 
+	This makes fat a long term hunger bar, it wont save you from direct
+	starvation, but it will help slow actual hunger down by a lot and supply
+	food choices
+- Rebalanced certain fatsources to work better with the new mechanic
+- Added new potioneffects
+- slowed the rate at which the Soulfood buff heals
+- fixed farmers asking for sugar stacks larger than possible with FFA
+
+v1.1a
+- changed hunger calculations to simpler terms, changing nothing.
+
 v1.1
 new
 - being very chunky now offers some defensive bonuses
@@ -16,19 +34,9 @@ changes
 fixes
 - cocoa beans can now be eaten when full
 - kibble is eaten by wolves again
-v1.1a
-- changed hunger calculations to simpler terms, changing nothing.
 
-v1.2
-- Massively slowed down the speed at which fat drains.
-- Fat bar is now roughly worth 4 full food bars of energy: 
-	This makes fat a long term hunger bar, it wont save you from direct
-	starvation, but it will help slow actual hunger down by a lot and supply
-	food choices
-- Rebalanced certain fatsources to work better with the new mechanic
-- Added new potioneffects
-- slowed the rate at which the Soulfood buff heals
-- fixed farmers asking for sugar stacks larger than possible with FFA
+
+
 
 
 
