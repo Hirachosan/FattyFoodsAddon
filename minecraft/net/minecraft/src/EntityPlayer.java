@@ -3,6 +3,7 @@ package net.minecraft.src;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collection;
@@ -115,6 +116,10 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
      * An instance of a fishing rod's hook. If this isn't null, the icon image of the fishing rod is slightly different
      */
     public EntityFishHook fishEntity = null;
+    
+    //Dynamic Lights TODO
+    private int dynamicLightUpdateTimer=0;
+    public boolean isholdingtorch =false;
 
     public EntityPlayer(World par1World)
     {
@@ -390,7 +395,49 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
         // FCMOD: Added
         UpdateModStatusVariables();
         // END FCMOD
+        //Dynamic Lights TODO
+        if (!worldObj.isRemote)
+        {
+        	dynamicLightUpdateTimer++;
+        	if (isholdingtorch ||dynamicLightUpdateTimer >9)
+        	{
+        		ItemStack heldItem = getHeldItem();
+        		dynamicLightUpdateTimer=0;
+        		if (heldItem!= null && isDynamicLightSource(heldItem.itemID))
+        		{
+        			isholdingtorch =true;
+//        			System.out.println(this + " is holding " + getHeldItem());
+        		}
+        		else
+        		{
+        			isholdingtorch =false;
+        		}
+        		
+                if (isholdingtorch) 
+                {
+                    FCUtilsBlockPos lightpos = new FCUtilsBlockPos(MathHelper.floor_double( posX ), 
+                    		MathHelper.floor_double(boundingBox.maxY), MathHelper.floor_double( posZ));
+                    if (worldObj.getBlockId(lightpos.i, lightpos.j, lightpos.k)==0)
+                    {
+                    worldObj.setBlock(lightpos.i, lightpos.j, lightpos.k, DLMain.lightsourceinvis.blockID,0 ,2);
+                    worldObj.scheduleBlockUpdate(lightpos.i, lightpos.j, lightpos.k, DLMain.lightsourceinvis.blockID, DLLightSource.lightSourceTickRate);
+                    }
+                }
+        	}
+        }
+
     }
+    
+    public boolean isDynamicLightSource(int itemID)
+    {
+//    	Block.blocksList[itemID].lightValue>0 TODO
+    	if(itemID==FCBetterThanWolves.fcBlockTorchNetherBurning.blockID || itemID==FCBetterThanWolves.fcBlockTorchFiniteBurning.blockID)
+    	{
+    		return true;
+    	}
+    	return false;
+    }
+    
 
     /**
      * Return the amount of time this entity should stay in a portal before being transported.
@@ -2210,42 +2257,48 @@ public abstract class EntityPlayer extends EntityLiving implements ICommandSende
 
     public boolean canPlayerEdit(int par1, int par2, int par3, int par4, ItemStack par5ItemStack)
     {
-        Class decoManager = null;
+        // FCMOD: Code added to prevent the player from placing blocks while in mid air
+        boolean disableHardcoreBouncing = false;
+
         try {
-            decoManager = Class.forName("DecoManager");
-        } catch (ClassNotFoundException e) {}
+            Class decoManagerClass;
+
+            if (FCUtilsReflection.isObfuscated()) {
+                decoManagerClass = Class.forName("net.minecraft.src.DecoManager");
+            }
+            else {
+                decoManagerClass = Class.forName("DecoManager");
+            }
+
+            Method decoInstanceGetter = decoManagerClass.getDeclaredMethod("getInstance");
+            FCAddOn decoInstance = (FCAddOn) decoInstanceGetter.invoke(null);
+
+            Field disableHarcoreBouncingField = decoManagerClass.getDeclaredField("disableHardcoreBouncing");
+            disableHardcoreBouncing = (Boolean) disableHarcoreBouncingField.get(decoInstance);
+        } catch (ClassNotFoundException e) {
+
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (SecurityException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
         
-        boolean disableHCBouncing = false;
-        
-        if (decoManager != null) {
-            Field decoHCBouncing;
-            try {
-                decoHCBouncing = decoManager.getDeclaredField("disableHardcoreBouncing");
-                FCAddOn decoInstance = (FCAddOn) decoManager.getDeclaredMethod("getInstance").invoke(null);
-                
-                disableHCBouncing = (Boolean) decoHCBouncing.get(decoInstance);
-            } catch (NoSuchFieldException e) {
-                e.printStackTrace();
-            } catch (SecurityException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (InvocationTargetException e) {
-                e.printStackTrace();
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+        if (disableHardcoreBouncing) {
+            if (!capabilities.isCreativeMode && !onGround && !inWater && !isOnLadder() && ridingEntity == null && !handleLavaMovement())
+            {
+                return false;
             }
         }
-    
-        // FCMOD: Code added to prevent the player from placing blocks while in mid air
-        if ( !capabilities.isCreativeMode && !onGround && !inWater && !isOnLadder() && ridingEntity == null && !handleLavaMovement()  && !disableHCBouncing)
-        {
-            return false;
-        }
         // END FCMOD
-        
+
         return this.capabilities.allowEdit ? true : (par5ItemStack != null ? par5ItemStack.func_82835_x() : false);
     }
     /**
